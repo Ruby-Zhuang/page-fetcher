@@ -8,14 +8,14 @@ const request = require('request');
 const fs = require("fs");
 const readline = require('readline');
 
-// CREATE READLINE.INTERFACE INSTANCE TO READ DATA FROM A READABLE STREAM
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 // 5a) CHECK IF USER WANTS TO OVERWRITE FILE
 const promptUser = (filePath, body) => {
+  // CREATE READLINE.INTERFACE INSTANCE TO READ DATA FROM A READABLE STREAM
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
   rl.question("File already exists! Do you want to overwrite? (Y/N) ", (answer) => {
     console.log(answer);
     if (answer === 'Y') writeFile(filePath, body);
@@ -30,14 +30,10 @@ const writeFile = (filePath, body) => {
     const fileSizeInBytes = stats.size;
 
     if (error) {
-      // Handle error if the file path is invalid
-      console.log("Failed to write to file");
-      rl.close();
-      return;
+      throw new Error('Error: file path is invalid!'); // Handle error if the file path is invalid
     }
     // Success!
     console.log(`Downloaded and saved ${fileSizeInBytes} bytes to ${filePath}`);
-    rl.close();
   });
 };
 
@@ -45,11 +41,10 @@ const makeRequest = (URL, filePath, fileExistsCallback, createFileCallback) => {
   request(URL, (error, response, body) => {
   
     // 3) CHECK IF URL ENTERED IS ACCURATE
-    if (error || response.statusCode !== 200) {
-      console.log('error:', error);
-      console.log('statusCode:', response && response.statusCode);
-      rl.close();
-      return;
+    if (error) {
+      throw new Error('Error accessing that URL!');
+    } else if (response.statusCode !== 200) {
+      throw new Error(`Error! Status Code: ${response.statusCode}!`);
     }
     // 4) CHECK IF FILE EXISTS
     // 4a) If there's no error, it means that the file exists (because it was readable)
