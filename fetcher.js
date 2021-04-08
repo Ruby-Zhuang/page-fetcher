@@ -1,4 +1,4 @@
-// GET COMMAND LINE ARGUMENTS
+// 1) GET COMMAND LINE ARGUMENTS
 const args = process.argv.slice(2);
 const URL = args[0];
 const filePath = args[1];
@@ -14,7 +14,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-// CHECK IF USER WANTS TO OVERWRITE FILE
+// 5a) CHECK IF USER WANTS TO OVERWRITE FILE
 const promptUser = (body) => {
   rl.question("File already exists! Do you want to overwrite? (Y/N) ", (answer) => {
     console.log(answer);
@@ -23,7 +23,7 @@ const promptUser = (body) => {
   });
 };
 
-// FUNCTION TO WRITE TO FILE
+// 5b) FUNCTION TO WRITE TO FILE
 const writeFile = (body) => {
   fs.writeFile(filePath, body, (error) => {
     if (error) {
@@ -40,20 +40,20 @@ const writeFile = (body) => {
   });
 };
 
-// USE REQUEST LIBRARY TO MAKE HTTP REQUEST
+// 2) USE REQUEST LIBRARY TO MAKE HTTP REQUEST
 request(URL, (error, response, body) => {
 
+  // 3) CHECK IF URL ENTERED IS ACCURATE
   if (error || response.statusCode !== 200) {
     console.log('error:', error);
     console.log('statusCode:', response && response.statusCode);
     rl.close();
     return;
   }
-  // CHECK IF FILE EXISTS
-  // If there's no error, it means that the file exists (because it was readable)
-  // If there's an error, it means the file doesn't exist and therefore we can create a new file right away
+  // 4) CHECK IF FILE EXISTS
+  // 4a) If there's no error, it means that the file exists (because it was readable)
+  // 4b) If there's an error, it means the file doesn't exist and therefore we can create a new file right away (skip 5a)
   fs.readFile(filePath, 'utf8', (error) => {
     (error) ?  writeFile(body) : promptUser(body);
   });
-
 });
