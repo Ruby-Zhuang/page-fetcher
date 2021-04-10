@@ -1,7 +1,9 @@
 // 1) GET COMMAND LINE ARGUMENTS
 const args = process.argv.slice(2);
-const URL = args[0];
-const filePath = args[1];
+const [URL, filePath] = args;
+// 2 lines of code below do the same as one line above
+// const URL = args[0];
+// const filePath = args[1];
 
 // REQUIRE LIBRARY & MODULES
 const request = require('request');
@@ -61,3 +63,6 @@ makeRequest(URL, filePath, promptUser, writeFile);
 // Anything that you use inside the function should be passed in as argument (idepotency)
 // best practices, refactor
 // should writeFile and promptUser be based in as callbacks? and request be in another function?
+
+
+// http://www.example.edu/ ./index.html
